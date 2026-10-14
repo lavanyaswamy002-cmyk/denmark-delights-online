@@ -56,15 +56,15 @@ function Index() {
         ))}
         <div className="relative z-10 mx-auto flex h-full max-w-7xl items-center px-6">
           <div key={i} className="max-w-2xl text-ink-foreground">
-            <p className="animate-rise text-sm font-semibold uppercase tracking-[0.4em] text-gold">{slides[i].kicker}</p>
+            <p className="animate-rise text-sm font-semibold uppercase tracking-[0.4em] text-gold">{slides[i]!.kicker}</p>
             <h1
               className="animate-rise mt-4 text-5xl font-bold leading-[1.05] md:text-7xl"
               style={{ animationDelay: "120ms" }}
             >
-              {slides[i].title}
+              {slides[i]!.title}
             </h1>
             <p className="animate-rise mt-6 max-w-lg text-lg opacity-85" style={{ animationDelay: "240ms" }}>
-              {slides[i].text}
+              {slides[i]!.text}
             </p>
             <div className="animate-rise mt-10 flex gap-4" style={{ animationDelay: "360ms" }}>
               <Link to="/menu" className="rounded-full bg-primary px-8 py-4 font-semibold text-primary-foreground shadow-soft transition hover:brightness-110">

@@ -148,13 +148,13 @@ function Orders({ branch, isOwner }: { branch: number; isOwner: boolean }) {
   });
   const setStatus = async (id: string, status: string) => {
     const { error } = await supabase.from("orders").update({ status }).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     qc.invalidateQueries({ queryKey: ["orders", branch] });
   };
   const del = async (id: string) => {
     if (!confirm("Delete this order?")) return;
     const { error } = await supabase.from("orders").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     qc.invalidateQueries({ queryKey: ["orders", branch] });
   };
 
@@ -214,22 +214,22 @@ function MenuEditor() {
 
   const add = async () => {
     const price = Number(n.price);
-    if (!n.name.trim() || !n.category.trim() || !(price >= 0) || n.price === "") return toast.error("Fill name, category and price");
+    if (!n.name.trim() || !n.category.trim() || !(price >= 0) || n.price === "") { toast.error("Fill name, category and price"); return; }
     const { error } = await supabase.from("menu_items").insert({ name: n.name.trim().slice(0, 100), category: n.category.trim().slice(0, 50), cuisine: n.cuisine, price, sort_order: (q.data?.length ?? 0) + 1 });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setN({ ...n, name: "", price: "" });
     toast.success("Dish added");
     refresh();
   };
   const update = async (id: string, patch: { name?: string; price?: number; is_available?: boolean; category?: string }) => {
     const { error } = await supabase.from("menu_items").update(patch).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     refresh();
   };
   const remove = async (id: string) => {
     if (!confirm("Delete this dish?")) return;
     const { error } = await supabase.from("menu_items").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     refresh();
   };
 
@@ -276,7 +276,7 @@ function BranchEditor() {
   });
   const save = async (id: number, patch: { name?: string; address?: string; phone?: string }) => {
     const { error } = await supabase.from("branches").update(patch).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Saved");
     qc.invalidateQueries({ queryKey: ["branches"] });
   };
@@ -311,14 +311,14 @@ function Staff() {
   const [branch, setBranch] = useState(1);
   const add = async () => {
     const { error } = await supabase.rpc("assign_branch_manager", { _email: email, _branch: branch });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setEmail("");
     toast.success("Access granted");
     qc.invalidateQueries({ queryKey: ["managers"] });
   };
   const remove = async (id: string) => {
     const { error } = await supabase.rpc("remove_branch_manager", { _role_id: id });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     qc.invalidateQueries({ queryKey: ["managers"] });
   };
   return (
@@ -357,16 +357,16 @@ function Account({ email }: { email: string }) {
     setBusy(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
-    if (error) return toast.error("Password is incorrect");
+    if (error) { toast.error("Password is incorrect"); return; }
     setPassword("");
     setStep(2);
   };
   const change = async () => {
-    if (!/^\S+@\S+\.\S+$/.test(newEmail)) return toast.error("Enter a valid email");
+    if (!/^\S+@\S+\.\S+$/.test(newEmail)) { toast.error("Enter a valid email"); return; }
     setBusy(true);
     const { error } = await supabase.auth.updateUser({ email: newEmail.trim() }, { emailRedirectTo: `${window.location.origin}/owner` });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Confirmation links sent to both your current and new email. Click both to finish.");
     setStep(1);
     setNewEmail("");

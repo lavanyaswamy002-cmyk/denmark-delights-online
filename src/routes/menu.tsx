@@ -70,7 +70,7 @@ function MenuPage() {
     return g;
   }, [items, cuisine]);
 
-  const lines = items.filter((m) => cart[m.id]).map((m) => ({ ...m, qty: cart[m.id] }));
+  const lines = items.filter((m) => cart[m.id]).map((m) => ({ ...m, qty: cart[m.id] ?? 0 }));
   const total = lines.reduce((s, l) => s + l.price * l.qty, 0);
   const count = lines.reduce((s, l) => s + l.qty, 0);
 
@@ -84,7 +84,7 @@ function MenuPage() {
     });
 
   const startCheckout = () => {
-    if (!count) return toast.error("Add at least one dish");
+    if (!count) { toast.error("Add at least one dish"); return; }
     setStep("details");
     setOpen(true);
   };
@@ -94,7 +94,8 @@ function MenuPage() {
     if (!r.success) {
       const e: Record<string, string> = {};
       r.error.issues.forEach((i) => (e[String(i.path[0])] = i.message));
-      return setErrors(e);
+      setErrors(e);
+      return;
     }
     setErrors({});
     setStep("type");
@@ -111,7 +112,7 @@ function MenuPage() {
       _items: lines.map((l) => ({ id: l.id, qty: l.qty })),
     });
     setSubmitting(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setOrderNo(data as number);
     setStep("done");
     setCart({});
