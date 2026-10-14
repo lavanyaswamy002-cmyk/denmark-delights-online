@@ -14,16 +14,188 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      branches: {
+        Row: {
+          address: string
+          id: number
+          name: string
+          phone: string
+        }
+        Insert: {
+          address?: string
+          id: number
+          name: string
+          phone?: string
+        }
+        Update: {
+          address?: string
+          id?: number
+          name?: string
+          phone?: string
+        }
+        Relationships: []
+      }
+      menu_items: {
+        Row: {
+          category: string
+          created_at: string
+          cuisine: string
+          description: string
+          id: string
+          is_available: boolean
+          name: string
+          price: number
+          sort_order: number
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          cuisine: string
+          description?: string
+          id?: string
+          is_available?: boolean
+          name: string
+          price: number
+          sort_order?: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          cuisine?: string
+          description?: string
+          id?: string
+          is_available?: boolean
+          name?: string
+          price?: number
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          branch_id: number
+          created_at: string
+          customer_name: string
+          id: string
+          items: Json
+          order_number: number
+          order_type: string
+          phone: string
+          status: string
+          table_number: string
+          total: number
+        }
+        Insert: {
+          branch_id: number
+          created_at?: string
+          customer_name: string
+          id?: string
+          items: Json
+          order_number?: never
+          order_type: string
+          phone: string
+          status?: string
+          table_number: string
+          total: number
+        }
+        Update: {
+          branch_id?: number
+          created_at?: string
+          customer_name?: string
+          id?: string
+          items?: Json
+          order_number?: never
+          order_type?: string
+          phone?: string
+          status?: string
+          table_number?: string
+          total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          branch_id: number | null
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          branch_id?: number | null
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          branch_id?: number | null
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      assign_branch_manager: {
+        Args: { _branch: number; _email: string }
+        Returns: undefined
+      }
+      can_access_branch: {
+        Args: { _branch: number; _user_id: string }
+        Returns: boolean
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      list_branch_managers: {
+        Args: never
+        Returns: {
+          branch_id: number
+          email: string
+          role_id: string
+        }[]
+      }
+      place_order: {
+        Args: {
+          _branch_id: number
+          _items: Json
+          _name: string
+          _phone: string
+          _table: string
+          _type: string
+        }
+        Returns: number
+      }
+      remove_branch_manager: { Args: { _role_id: string }; Returns: undefined }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "owner" | "branch_manager"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +322,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["owner", "branch_manager"],
+    },
   },
 } as const
